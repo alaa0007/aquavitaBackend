@@ -1,7 +1,9 @@
 
-import { Body, Controller, HttpStatus, Post, Response } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { loginDto } from './dto/login.dto';
+import { LoginDto } from './dto/login.dto';
+import { Response } from 'express';
+import { RegisterDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -13,14 +15,23 @@ export class AuthController {
      * @returns A promise resolving with the authentication response or throws an error if authentication fails.
     */
     @Post('login')
-    async login(@Response() res, @Body() user: loginDto) {        
+    async login(@Res() res: Response, @Body() user: LoginDto) {        
         try {
-            const response  = await this.authService.authenticate(user);
-            
+            const response  = await this.authService.authenticate(user);   
             return res.status(HttpStatus.OK).json({ response });
         } catch (error) {
             return res.status(HttpStatus.UNAUTHORIZED).json({ error: error.message });
         }
         
+    }
+
+    @Post('register')
+    async register(@Res() res: Response, @Body() user: RegisterDto) {        
+        try {
+            const response  = await this.authService.register(user);   
+            return res.status(HttpStatus.OK).json({ response });
+        } catch (error) {
+            return res.status(HttpStatus.UNAUTHORIZED).json({ error: error.message });
+        }
     }
 }

@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from "class-validator";
 import { Role } from "../interface/role";
 
-export class profileDto{
+export class ProfileDto{
 
     @IsString()
     @IsNotEmpty()

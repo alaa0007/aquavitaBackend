@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { IAuthenticated, Role, User } from './interface/role';
 import { faker, simpleFaker } from '@faker-js/faker';
-import { loginDto } from './dto/login.dto';
+import { LoginDto } from './dto/login.dto';
 import { sign } from 'jsonwebtoken';
+import { RegisterDto } from './dto/register.dto';
 
 
 @Injectable()
@@ -53,9 +54,14 @@ export class AuthService {
      * @param user The user to register.
      * @returns The registered user.
     */
-    async register(user: User): Promise<User> {
-        this.users.push(user);
-        return user;
+    async register(user: RegisterDto): Promise<User> {
+        const registerUser: User = {
+            id: simpleFaker.string.uuid(),
+            ...user,
+            role: Role.USER
+        }
+        this.users.push(registerUser);
+        return registerUser;
     }
 
     /**
@@ -81,7 +87,7 @@ export class AuthService {
      * a JSON web token.
      * @throws {NotFoundException} if the user is not found or the password is invalid.
     */
-    async authenticate(login: loginDto): Promise<IAuthenticated> {
+    async authenticate(login: LoginDto): Promise<IAuthenticated> {
         const user = await this.validateUser(login.email, login.password);
         if (!user) {
             throw new NotFoundException('Invalid credentials');
